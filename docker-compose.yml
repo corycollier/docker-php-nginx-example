@@ -1,0 +1,69 @@
+---
+version: "3"
+
+services:
+    mysql:
+        environment:
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        image: "mysql:5.7"
+        ports:
+            - "3306:3306"
+        networks:
+            - mainframe
+
+    redis:
+        image: "redis:2.8.22"
+        ports:
+            - "6379:6379"
+        networks:
+            - mainframe
+    app-1:
+        build:
+            context: "."
+            dockerfile: "./docker/php/Dockerfile"
+        volumes:
+            - "./repos/app-1:/var/www/html"
+        ports:
+            - "8001:80"
+        networks:
+            mainframe:
+                aliases:
+                    - php-app-1
+
+    app-2:
+        build:
+            context: "."
+            dockerfile: "./docker/php/Dockerfile"
+        volumes:
+            - "./repos/app-2:/var/www/html"
+        ports:
+            - "8002:80"
+        networks:
+            mainframe:
+                aliases:
+                    - php-app-2
+
+    app-3:
+        build:
+            context: "."
+            dockerfile: "./docker/php/Dockerfile"
+        volumes:
+            - "./repos/app-3:/var/www/html"
+        ports:
+            - "8003:80"
+        networks:
+            mainframe:
+                aliases:
+                    - php-app-3
+
+    lb:
+        build:
+            context: "."
+            dockerfile: "./docker/lb/Dockerfile"
+        ports:
+            - "80:80"
+        networks:
+            - mainframe
+
+networks:
+    mainframe:
